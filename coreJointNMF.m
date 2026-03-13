@@ -75,7 +75,7 @@ for g = 1:length(groups)
  
     disp('Step 1: Pooling data from all samples...');
 
-    pooled_Y    = cell(1, length(Klist));  % One cell per cell type: [TotalSpots x 40 genes]
+    pooled_Y    = cell(1, length(Klist));  
     pooled_R_vec = [];                     % Reactivity gene counts: [TotalSpots x nReactivityGenes]
     spot_origin  = [];                     % Tracks which sample each spot came from
 
