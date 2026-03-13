@@ -14,7 +14,7 @@ Klist = [1, 2, 1, 1];
 cellTypeNames = {'Astrocytes', 'Neurons', 'OPCs', 'Microglia'};
 % --- End Configuration ---
 
-% Build profile names automatically from Klist and cellTypeNames
+% make profile names automatically from Klist and cellTypeNames
 % e.g. Klist=[1,2,1,1] -> {'Astrocyte','Neuron 1','Neuron 2','OPC','Microglia'}
 profileNames = {};
 for ct = 1:length(Klist)
@@ -65,7 +65,7 @@ for ds = 1:length(datasets)
     end
 
     disp(['Loading: ', mat_file]);
-    load(mat_file); % Loads the 'S' structure
+    load(mat_file); 
 
     % Load cell type gene reference matrix
     C = readCelltypeGeneCSV(1);
@@ -262,11 +262,11 @@ for ds = 1:length(datasets)
     end
     clear mr mct
 
-    % Prefix p-value column names and merge with correlation table
+    % p-value column names and merge with correlation table
     pval.Properties.VariableNames = strcat('pval_', pval.Properties.VariableNames);
     combined_table = [corr_table, pval];
 
-    % Tag each row with sample name for later compilation
+    % Tag each row with sample name
     combined_table.SampleName = repmat({fdir}, height(combined_table), 1);
 
     % Save per-dataset results
@@ -276,8 +276,8 @@ for ds = 1:length(datasets)
 
     % Prepare table for cross-dataset compilation
     temp_tbl = combined_table;
-    temp_tbl.CellType = combined_table.Properties.RowNames;  % Preserve row labels as a column
-    temp_tbl.Properties.RowNames = {};                        % Clear row names to allow stacking
+    temp_tbl.CellType = combined_table.Properties.RowNames; 
+    temp_tbl.Properties.RowNames = {};                       
 
     if contains(fdir, '1week', 'IgnoreCase', true)
         compiled_1week = [compiled_1week; temp_tbl];
@@ -319,17 +319,17 @@ for ds = 1:length(datasets)
     disp(sim_pval);
     disp(['Note: p=0 means < ', num2str(1/numSamples), '; p=1 means all null simulations had larger overlap']);
 
-    % Prefix p-value column names and merge cosine similarity tables
+    %p-value column names and merge cosine similarity tables
     sim_pval.Properties.VariableNames = strcat('pval_', sim_pval.Properties.VariableNames);
     sim_combined = [sim_costheta, sim_pval];
     sim_combined.SampleName = repmat({fdir}, height(sim_combined), 1);
 
-    % Save cosine similarity results for this dataset
+    % Save cosine similarity results
     sim_filename = fullfile(sampleDir, fdir, ['cosine_similarity_', fdir, '.csv']);
     writetable(sim_combined, sim_filename, 'WriteRowNames', true);
     disp(['Cosine similarity results saved to ', sim_filename]);
 
-    % Accumulate cosine similarity for cross-dataset compilation
+    % Accumulate cosine similarity for cross-dataset analysis
     temp_sim_tbl = sim_combined;
     temp_sim_tbl.CellType = sim_combined.Properties.RowNames;
     temp_sim_tbl.Properties.RowNames = {};
